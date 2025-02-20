@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stats Website</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="search-container">
+            <div class="search-wrapper">
+                <input type="text" 
+                       id="player-search" 
+                       class="minecraft-input" 
+                       placeholder="Search player..."
+                       autocomplete="off">
+                <button class="search-button" id="search-submit">
+                    <div class="pokeball-button-design">
+                        <div class="pokeball-button-top"></div>
+                        <div class="pokeball-button-bottom"></div>
+                        <div class="pokeball-button-center"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div class="clouds">
+            <div class="cloud cloud-1"></div>
+            <div class="cloud cloud-2"></div>
+            <div class="cloud cloud-3"></div>
+        </div>
+
+        <div class="leaderboard">
+            <h2 class="leaderboard-title">Top Players</h2>
+            
+            <div class="leaderboard-controls">
+                <div class="sort-controls">
+                    <label for="sort-select">Sort by:</label>
+                    <select id="sort-select" class="minecraft-button">
+                        <option value="kills">Kills</option>
+                        <option value="deaths">Deaths</option>
+                        <option value="highestKillStreak">Highest Streak</option>
+                        <option value="xp">XP</option>
+                        <option value="currentKillStreak">Current Streak</option>
+                    </select>
+                    
+                    <label for="page-size-select">Players per page:</label>
+                    <select id="page-size-select" class="minecraft-button">
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                        <option value="50">50</option>
+                        <option value="60">60</option>
+                        <option value="70">70</option>
+                        <option value="80">80</option>
+                        <option value="90">90</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+                
+                <div class="page-controls">
+                    <button id="prev-page" class="minecraft-button" disabled>Previous</button>
+                    <span id="page-display">Page 1</span>
+                    <button id="next-page" class="minecraft-button">Next</button>
+                </div>
+            </div>
+
+            <ul class="leaderboard-list">
+                <!-- Will be populated by JavaScript -->
+                <li class="leaderboard-item loading">
+                    Loading leaderboard...
+                </li>
+            </ul>
+        </div>
+
+        <div class="players">
+            <div class="players-header">
+                <h2>Players</h2>
+            </div>
+            <div class="players-grid">
+                <!-- Player cards will be populated via API -->
+            </div>
+        </div>
+    </div>
+
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 12s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 14s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 16s;"></div>
+    </div>
+
+    <div class="background-decorations">
+        <div class="pokeball-wrapper">
+            <div class="pokeball-shadow"></div>
+            <div class="pokeball">
+                <div class="pokeball-half pokeball-top"></div>
+                <div class="pokeball-half pokeball-bottom"></div>
+                <div class="pokeball-belt"></div>
+                <div class="pokeball-button"></div>
+            </div>
+        </div>
+        <div class="pokeball-wrapper">
+            <div class="pokeball-shadow"></div>
+            <div class="pokeball">
+                <div class="pokeball-half pokeball-top"></div>
+                <div class="pokeball-half pokeball-bottom"></div>
+                <div class="pokeball-belt"></div>
+                <div class="pokeball-button"></div>
+            </div>
+        </div>
+        <div class="pokeball-wrapper">
+            <div class="pokeball-shadow"></div>
+            <div class="pokeball">
+                <div class="pokeball-half pokeball-top"></div>
+                <div class="pokeball-half pokeball-bottom"></div>
+                <div class="pokeball-belt"></div>
+                <div class="pokeball-button"></div>
+            </div>
+        </div>
+        <div class="pokeball-wrapper">
+            <div class="pokeball-shadow"></div>
+            <div class="pokeball">
+                <div class="pokeball-half pokeball-top"></div>
+                <div class="pokeball-half pokeball-bottom"></div>
+                <div class="pokeball-belt"></div>
+                <div class="pokeball-button"></div>
+            </div>
+        </div>
+        <div class="minecraft-block"></div>
+        <div class="minecraft-block"></div>
+    </div>
+
+    <!-- Add loading animation styles -->
+    <style>
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+    </style>
+
+    <!-- Add the script at the end of body -->
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+
