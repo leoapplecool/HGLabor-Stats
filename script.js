@@ -188,11 +188,17 @@ textStyle.textContent = `
     }
 
     /* Base font styles */
-    body, button, input, select {
+    body, button, input, select, #page-display {
         font-family: 'Minecraft', monospace !important;
         -webkit-font-smoothing: none !important;
         -moz-osx-font-smoothing: unset !important;
         text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+    }
+
+    /* Ensure page display uses Minecraft font */
+    #page-display {
+        font-size: 16px !important;
+        letter-spacing: 0.5px !important;
     }
 
     /* Consistent text sizes across devices */
