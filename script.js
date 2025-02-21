@@ -395,6 +395,15 @@ async function showPlayerDetails(playerId, playerName, playerData) {
         document.querySelector('.leaderboard').style.display = 'none';
         playerDetails.style.display = 'block';
         
+        // Check if player is online
+        const onlineStatus = await checkPlayerOnlineStatus(playerName);
+        
+        // Get player achievements
+        const achievements = await getPlayerAchievements(playerId, currentSort);
+        
+        // Create achievement badges HTML
+        const achievementBadges = generateAchievementBadges(achievements, playerName);
+        
         // Show loading state first
         playerDetails.innerHTML = `
             <div class="loading-container">
@@ -410,7 +419,15 @@ async function showPlayerDetails(playerId, playerName, playerData) {
         playerDetails.innerHTML = `
             <div class="player-header">
                 <button class="minecraft-button back-button">← Back to Leaderboard</button>
-                <h2 class="player-name">${playerName}</h2>
+                <h2 class="player-name">
+                    ${playerName}
+                    ${playerName.toLowerCase() === 'leoapple' ? 
+                        '<span class="crown-icon" title="Website Builder">👑</span>' : ''}
+                    ${achievementBadges}
+                    <span class="online-status ${onlineStatus ? 'online' : 'offline'}">
+                        ${onlineStatus ? '🟢 Online' : '⚫ Offline'}
+                    </span>
+                </h2>
             </div>
             
             <div class="profile-content">
@@ -597,6 +614,71 @@ async function showPlayerDetails(playerId, playerName, playerData) {
                 background: #f5f5f5;
                 border-color: #ddd;
             }
+
+            .player-name {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .crown-icon {
+                cursor: help;
+                transition: transform 0.3s ease;
+            }
+
+            .crown-icon:hover {
+                transform: scale(1.2);
+            }
+
+            .achievement-badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 0.8em;
+                margin-left: 8px;
+                background: rgba(255, 215, 0, 0.1);
+                border: 1px solid rgba(255, 215, 0, 0.3);
+            }
+
+            .achievement-first {
+                background: linear-gradient(45deg, #FFD700, #FFA500);
+                color: #000;
+            }
+
+            .achievement-second {
+                background: linear-gradient(45deg, #C0C0C0, #A9A9A9);
+                color: #000;
+            }
+
+            .achievement-third {
+                background: linear-gradient(45deg, #CD7F32, #8B4513);
+                color: #fff;
+            }
+
+            .achievement-top10 {
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            .online-status {
+                font-size: 0.8em;
+                padding: 4px 8px;
+                border-radius: 12px;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .online-status.online {
+                background: rgba(0, 255, 0, 0.1);
+                color: #00ff00;
+            }
+
+            .online-status.offline {
+                background: rgba(128, 128, 128, 0.1);
+                color: #808080;
+            }
         `;
         document.head.appendChild(styleElement);
 
@@ -748,6 +830,94 @@ function createPlayerDetailsSection() {
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
+    // Add player count display at the top
+    const header = document.querySelector('.header') || document.querySelector('.container').firstElementChild;
+    const playerCountDisplay = document.createElement('div');
+    playerCountDisplay.className = 'player-count';
+    playerCountDisplay.innerHTML = `
+        <span class="online-dot">⚫</span>
+        <span class="count-text">Loading...</span>
+    `;
+    header.insertBefore(playerCountDisplay, header.firstChild);
+
+    // Add styles for player count
+    const playerCountStyle = document.createElement('style');
+    playerCountStyle.textContent = `
+        .player-count {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .player-count {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .online-dot {
+            font-size: 12px;
+            color: #00ff00;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .count-text {
+            color: inherit;
+        }
+    `;
+    document.head.appendChild(playerCountStyle);
+
+    // Function to update player count
+    async function updatePlayerCount() {
+        try {
+            const response = await fetch('https://api.mcsrvstat.us/3/mc.norisk.gg');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            
+            // Get player count from server data
+            const playerCount = data.players?.online || 0;
+            const maxPlayers = data.players?.max || 100;
+            
+            const countDisplay = document.querySelector('.player-count');
+            if (countDisplay) {
+                countDisplay.innerHTML = `
+                    <span class="online-dot">🟢</span>
+                    <span class="count-text">${playerCount}/${maxPlayers} Player${playerCount !== 1 ? 's' : ''} Online</span>
+                `;
+            }
+        } catch (error) {
+            console.error('Error fetching player count:', error);
+            const countDisplay = document.querySelector('.player-count');
+            if (countDisplay) {
+                countDisplay.innerHTML = `
+                    <span class="online-dot" style="color: #ff0000;">⚫</span>
+                    <span class="count-text">Error loading player count</span>
+                `;
+            }
+            
+            // Try to reconnect after 5 seconds if there's an error
+            setTimeout(updatePlayerCount, 5000);
+        }
+    }
+
+    // Update player count initially and every 30 seconds
+    updatePlayerCount();
+    setInterval(updatePlayerCount, 30000);
+
     // Sort select handler
     document.getElementById('sort-select').addEventListener('change', (e) => {
         currentSort = e.target.value;
@@ -955,7 +1125,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(footerStyle);
 
     // Add dark mode styles and toggle functionality
-    const header = document.querySelector('.header') || document.querySelector('.container').firstElementChild;
     const darkModeToggle = document.createElement('button');
     darkModeToggle.className = 'dark-mode-toggle minecraft-button';
     darkModeToggle.innerHTML = '🌙'; // Moon emoji for dark mode
@@ -1178,4 +1347,56 @@ async function fetchPlayerNeighbors(playerId) {
 const existingBackgroundStyle = document.querySelector('style[data-background-pokeballs]');
 if (existingBackgroundStyle) {
     existingBackgroundStyle.remove();
+}
+
+// New helper functions
+async function checkPlayerOnlineStatus(playerName) {
+    try {
+        const response = await fetch(`https://api.hglabor.de/playercount`);
+        const data = await response.json();
+        return data.players.includes(playerName);
+    } catch (error) {
+        console.error('Error checking online status:', error);
+        return false;
+    }
+}
+
+async function getPlayerAchievements(playerId, sortType) {
+    try {
+        const response = await fetch(`https://api.hglabor.de/stats/FFA/top?sort=${sortType}`);
+        const data = await response.json();
+        const playerIndex = data.findIndex(p => p.playerId === playerId);
+        
+        return {
+            rank: playerIndex + 1,
+            isTop10: playerIndex < 10,
+            isFirst: playerIndex === 0,
+            isSecond: playerIndex === 1,
+            isThird: playerIndex === 2
+        };
+    } catch (error) {
+        console.error('Error fetching achievements:', error);
+        return null;
+    }
+}
+
+function generateAchievementBadges(achievements, playerName) {
+    if (!achievements) return '';
+
+    let badges = '';
+
+    if (achievements.isFirst) {
+        badges += '<span class="achievement-badge achievement-first">🥇 #1</span>';
+    }
+    if (achievements.isSecond) {
+        badges += '<span class="achievement-badge achievement-second">🥈 #2</span>';
+    }
+    if (achievements.isThird) {
+        badges += '<span class="achievement-badge achievement-third">🥉 #3</span>';
+    }
+    if (achievements.isTop10 && !achievements.isFirst && !achievements.isSecond && !achievements.isThird) {
+        badges += '<span class="achievement-badge achievement-top10">Top 10</span>';
+    }
+
+    return badges;
 } 
