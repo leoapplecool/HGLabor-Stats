@@ -395,9 +395,6 @@ async function showPlayerDetails(playerId, playerName, playerData) {
         document.querySelector('.leaderboard').style.display = 'none';
         playerDetails.style.display = 'block';
         
-        // Check if player is online
-        const onlineStatus = await checkPlayerOnlineStatus(playerName);
-        
         // Get player achievements
         const achievements = await getPlayerAchievements(playerId, currentSort);
         
@@ -424,9 +421,6 @@ async function showPlayerDetails(playerId, playerName, playerData) {
                     ${playerName.toLowerCase() === 'leoapple' ? 
                         '<span class="crown-icon" title="Website Builder">👑</span>' : ''}
                     ${achievementBadges}
-                    <span class="online-status ${onlineStatus ? 'online' : 'offline'}">
-                        ${onlineStatus ? '🟢 Online' : '⚫ Offline'}
-                    </span>
                 </h2>
             </div>
             
@@ -661,24 +655,7 @@ async function showPlayerDetails(playerId, playerName, playerData) {
                 border: 1px solid rgba(255, 255, 255, 0.2);
             }
 
-            .online-status {
-                font-size: 0.8em;
-                padding: 4px 8px;
-                border-radius: 12px;
-                display: inline-flex;
-                align-items: center;
-                gap: 4px;
-            }
-
-            .online-status.online {
-                background: rgba(0, 255, 0, 0.1);
-                color: #00ff00;
-            }
-
-            .online-status.offline {
-                background: rgba(128, 128, 128, 0.1);
-                color: #808080;
-            }
+            
         `;
         document.head.appendChild(styleElement);
 
@@ -1352,12 +1329,25 @@ if (existingBackgroundStyle) {
 // New helper functions
 async function checkPlayerOnlineStatus(playerName) {
     try {
-        const response = await fetch(`https://api.hglabor.de/playercount`);
+        const response = await fetch('https://api.mcsrvstat.us/3/mc.norisk.gg');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
-        return data.players.includes(playerName);
+        
+        // If we can't get the player list, show "Unknown" status instead
+        if (!data.players?.list) {
+            return null; // null indicates unknown status
+        }
+        
+        const isOnline = data.players.list.some(player => 
+            player.toLowerCase() === playerName.toLowerCase()
+        );
+        
+        return isOnline;
     } catch (error) {
         console.error('Error checking online status:', error);
-        return false;
+        return null; // Return null for unknown status
     }
 }
 
