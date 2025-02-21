@@ -5,6 +5,49 @@ let pageSize = 10;
 // Add loading styles at the top of the file
 const loadingStyle = document.createElement('style');
 loadingStyle.textContent = `
+    /* Smooth page transitions */
+    .container {
+        opacity: 0;
+        animation: fadeInPage 0.6s ease-out forwards;
+    }
+
+    @keyframes fadeInPage {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Button hover effects */
+    .minecraft-button {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .minecraft-button:hover {
+        transform: translateY(-2px);
+    }
+
+    .minecraft-button:active {
+        transform: translateY(1px);
+    }
+
+    /* Card hover effects */
+    .stat-card {
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Loading animations */
     .loading-container {
         display: flex;
         flex-direction: column;
@@ -31,14 +74,194 @@ loadingStyle.textContent = `
         margin-top: 15px;
         color: #fff;
         font-family: 'Minecraft', sans-serif;
+        animation: pulse 1.5s ease-in-out infinite;
     }
 
+    @keyframes pulse {
+        0% { opacity: 0.6; }
+        50% { opacity: 1; }
+        100% { opacity: 0.6; }
+    }
+
+    /* Container animations */
+    @keyframes expandContainer {
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+            max-height: 0;
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            max-height: 2000px;
+        }
+    }
+
+    /* Item animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .leaderboard-list {
+        animation: expandContainer 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        overflow: hidden;
+    }
+
+    .leaderboard-item {
+        opacity: 0;
+        animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        transition: all 0.3s ease;
+    }
+
+    .leaderboard-item:hover {
+        transform: translateX(5px);
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Smoother sequential delays */
+    .leaderboard-item:nth-child(1) { animation-delay: 0.3s; }
+    .leaderboard-item:nth-child(2) { animation-delay: 0.35s; }
+    .leaderboard-item:nth-child(3) { animation-delay: 0.4s; }
+    .leaderboard-item:nth-child(4) { animation-delay: 0.45s; }
+    .leaderboard-item:nth-child(5) { animation-delay: 0.5s; }
+    .leaderboard-item:nth-child(6) { animation-delay: 0.55s; }
+    .leaderboard-item:nth-child(7) { animation-delay: 0.6s; }
+    .leaderboard-item:nth-child(8) { animation-delay: 0.65s; }
+    .leaderboard-item:nth-child(9) { animation-delay: 0.7s; }
+    .leaderboard-item:nth-child(10) { animation-delay: 0.75s; }
+
+    /* Ensure smooth animation for containers */
+    .stat-card {
+        animation: expandContainer 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        overflow: hidden;
+    }
+
+    /* Smooth mode transitions */
+    body, 
+    body.dark-mode,
+    body:not(.dark-mode) {
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+
+    /* Disable animations for background elements */
     .background-pokeballs {
         animation: none !important;
         transform: none !important;
     }
+
+    /* Select and input animations */
+    .minecraft-select,
+    input[type="text"] {
+        transition: all 0.3s ease;
+    }
+
+    .minecraft-select:hover,
+    input[type="text"]:hover {
+        transform: translateY(-1px);
+    }
+
+    .minecraft-select:focus,
+    input[type="text"]:focus {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
 `;
 document.head.appendChild(loadingStyle);
+
+// Add font and responsive text styles
+const textStyle = document.createElement('style');
+textStyle.textContent = `
+    /* Import Minecraft font */
+    @font-face {
+        font-family: 'Minecraft';
+        src: url('https://cdn.jsdelivr.net/gh/South-Paw/typeface-minecraft@master/font/minecraft.woff2') format('woff2'),
+             url('https://cdn.jsdelivr.net/gh/South-Paw/typeface-minecraft@master/font/minecraft.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    /* Base font styles */
+    body, button, input, select {
+        font-family: 'Minecraft', monospace !important;
+        -webkit-font-smoothing: none !important;
+        -moz-osx-font-smoothing: unset !important;
+        text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+    }
+
+    /* Consistent text sizes across devices */
+    .leaderboard-item {
+        font-size: 16px !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    .leaderboard-rank {
+        font-size: 16px !important;
+    }
+
+    .leaderboard-player, .leaderboard-name {
+        font-size: 16px !important;
+    }
+
+    .leaderboard-stats {
+        font-size: 16px !important;
+    }
+
+    .leaderboard-stat {
+        font-size: 16px !important;
+    }
+
+    .stat-label, .stat-value {
+        font-size: 16px !important;
+    }
+
+    h1, h2, h3 {
+        font-weight: normal !important;
+        text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        font-size: 20px !important;
+    }
+
+    /* Ensure consistent button text */
+    .minecraft-button {
+        font-size: 16px !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    /* Ensure consistent select text */
+    .minecraft-select {
+        font-size: 16px !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    /* Ensure footer text consistency */
+    .footer {
+        font-size: 14px !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    /* Remove any responsive font-size changes */
+    @media (max-width: 768px) {
+        .leaderboard-item,
+        .leaderboard-rank,
+        .leaderboard-player,
+        .leaderboard-name,
+        .leaderboard-stats,
+        .leaderboard-stat,
+        .stat-label,
+        .stat-value,
+        .minecraft-button,
+        .minecraft-select {
+            font-size: 16px !important;
+        }
+    }
+`;
+document.head.appendChild(textStyle);
 
 async function fetchPlayerName(uuid) {
     try {
@@ -61,19 +284,24 @@ async function fetchLeaderboard() {
     `;
 
     try {
-        const response = await fetch(`https://api.hglabor.de/stats/FFA/top?sort=${currentSort}&limit=${pageSize}`);
-        const data = await response.json();
+        // Calculate offset based on current page and page size
+        const offset = (currentPage - 1) * pageSize;
+        
+        // Fetch all data first
+        const response = await fetch(`https://api.hglabor.de/stats/FFA/top?sort=${currentSort}`);
+        const allData = await response.json();
+        
+        // Manually slice the data based on offset and pageSize
+        const pageData = allData.slice(offset, offset + pageSize);
         
         const leaderboardList = document.querySelector('.leaderboard-list');
         leaderboardList.innerHTML = '';
         
-        // Limit the data to pageSize
-        const displayData = data.slice(0, pageSize);
-        
-        for (let i = 0; i < displayData.length; i++) {
-            const player = displayData[i];
+        for (let i = 0; i < pageData.length; i++) {
+            const player = pageData[i];
+            const position = offset + i + 1;
             
-            // Fetch player name from UUID
+            // Fetch player name
             let playerName;
             try {
                 const nameResponse = await fetch(`https://api.ashcon.app/mojang/v2/user/${player.playerId}`);
@@ -87,7 +315,6 @@ async function fetchLeaderboard() {
             const li = document.createElement('li');
             li.className = 'leaderboard-item';
             
-            // Store both playerId and playerName
             li.dataset.playerId = player.playerId;
             li.dataset.playerName = playerName;
 
@@ -110,8 +337,6 @@ async function fetchLeaderboard() {
                 return `<span class="${className}">${stat.value} ${stat.label}</span>`;
             }).join('');
 
-            const position = i + 1;
-
             li.innerHTML = `
                 <span class="leaderboard-rank">#${position}</span>
                 <span class="leaderboard-player">${playerName}</span>
@@ -122,9 +347,10 @@ async function fetchLeaderboard() {
             leaderboardList.appendChild(li);
         }
 
+        // Update pagination buttons
         document.getElementById('prev-page').disabled = currentPage === 1;
         document.getElementById('page-display').textContent = `Page ${currentPage}`;
-        document.getElementById('next-page').disabled = displayData.length < pageSize;
+        document.getElementById('next-page').disabled = offset + pageSize >= allData.length;
 
         setupPlayerClickHandlers();
 
@@ -262,74 +488,111 @@ async function showPlayerDetails(playerId, playerName, playerData) {
         document.getElementById('neighbors-loading').style.display = 'none';
 
         // Add styles for the new layout
-        const style = document.createElement('style');
-        style.textContent = `
+        const styleElement = document.createElement('style');
+        styleElement.textContent = `
             .profile-content {
+                padding: 20px;
+            }
+
+            .stat-cards {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
                 gap: 20px;
-                margin: 20px 0;
-            }
-
-            .stats-section {
-                display: flex;
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .hero-stats-section {
-                grid-column: 1 / -1;
-                width: 100%;
-            }
-
-            .hero-stats-container {
                 margin-top: 20px;
             }
 
-            .mini-leaderboard {
-                background: transparent;
-                padding: 0;
+            .stat-card {
+                padding: 20px;
+                border-radius: 8px;
+                border: 2px solid #ccc;
+                background: rgba(255, 255, 255, 0.05);
             }
 
-            .mini-leaderboard h3 {
-                margin-top: 0;
-                margin-bottom: 15px;
-                color: #FFD700;
+            body:not(.dark-mode) .stat-card {
+                background: white;
+                border-color: #ddd;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .leaderboard-card {
+                grid-column: span 1;
             }
 
             .neighbor-list {
                 margin: 0;
                 padding: 0;
+                list-style: none;
             }
 
-            .current-player {
-                background: rgba(255, 215, 0, 0.1) !important;
-                border: 1px solid rgba(255, 215, 0, 0.3) !important;
-                transform: scale(1.02);
-                position: relative;
-                z-index: 1;
-            }
-
-            .neighbor-item {
-                transition: transform 0.2s;
-                cursor: pointer;
-            }
-
-            .neighbor-item:hover {
-                transform: scale(1.01);
-            }
-
-            .mini-leaderboard .leaderboard-item {
+            .neighbor-list .leaderboard-item {
+                padding: 10px;
                 margin: 5px 0;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                background: rgba(255, 255, 255, 0.03);
+                transition: all 0.3s ease;
             }
 
-            @media (max-width: 768px) {
-                .profile-content {
-                    grid-template-columns: 1fr;
-                }
+            body:not(.dark-mode) .neighbor-list .leaderboard-item {
+                background: #f5f5f5;
+                border-color: #e0e0e0;
+            }
+
+            .neighbor-list .leaderboard-item.current-player {
+                background: rgba(255, 215, 0, 0.1);
+                border-color: rgba(255, 215, 0, 0.3);
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+            }
+
+            body:not(.dark-mode) .neighbor-list .leaderboard-item.current-player {
+                background: rgba(255, 215, 0, 0.15);
+                border-color: rgba(255, 215, 0, 0.4);
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+            }
+
+            .neighbor-list .leaderboard-item:hover {
+                background: rgba(255, 255, 255, 0.08);
+                transform: translateY(-1px);
+            }
+
+            body:not(.dark-mode) .neighbor-list .leaderboard-item:hover {
+                background: #ffffff;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .neighbor-list .leaderboard-stats {
+                display: flex;
+                gap: 10px;
+                font-size: 0.9em;
+                margin-top: 5px;
+            }
+
+            .neighbor-list .leaderboard-stat {
+                background: rgba(255, 255, 255, 0.05);
+                padding: 2px 6px;
+                border-radius: 3px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            body:not(.dark-mode) .neighbor-list .leaderboard-stat {
+                background: #eee;
+                border-color: #ddd;
+            }
+
+            .not-ranked-message {
+                padding: 15px;
+                text-align: center;
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 4px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            body:not(.dark-mode) .not-ranked-message {
+                background: #f5f5f5;
+                border-color: #ddd;
             }
         `;
-        document.head.appendChild(style);
+        document.head.appendChild(styleElement);
 
         // Add click handlers for neighbor items
         const neighborItems = playerDetails.querySelectorAll('.neighbor-item');
@@ -645,7 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(style);
 
     // Remove any existing background pokeball styles
-    const existingStyles = document.querySelectorAll('style');
+    const existingStyles = document.querySelectorAll('style[data-background-pokeballs]');
     existingStyles.forEach(style => {
         if (style.textContent.includes('background-pokeballs') || 
             style.textContent.includes('pokeball-background') ||
