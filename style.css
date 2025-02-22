@@ -446,19 +446,37 @@ body::before {
 }
 
 /* Top 3 Players Special Styling */
-.leaderboard-item:nth-child(1) .leaderboard-rank {
-  color: gold;
-  text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+.leaderboard-rank.rank-gold {
+    color: #FFD700;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
 }
 
-.leaderboard-item:nth-child(2) .leaderboard-rank {
-  color: silver;
-  text-shadow: 0 0 5px rgba(192, 192, 192, 0.5);
+.leaderboard-rank.rank-silver {
+    color: #C0C0C0;
+    text-shadow: 0 0 5px rgba(192, 192, 192, 0.5);
 }
 
-.leaderboard-item:nth-child(3) .leaderboard-rank {
-  color: #cd7f32;
-  text-shadow: 0 0 5px rgba(205, 127, 50, 0.5);
+.leaderboard-rank.rank-bronze {
+    color: #CD7F32;
+    text-shadow: 0 0 5px rgba(205, 127, 50, 0.5);
+}
+
+.leaderboard-rank {
+    color: #666; /* Default color for all other ranks */
+    font-size: 1.2em;
+    font-weight: bold;
+    width: 40px;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.leaderboard-rank::before {
+    content: '#';
+    opacity: 0.5;
+}
+
+.leaderboard-item:hover .leaderboard-rank {
+    transform: scale(1.1);
 }
 
 /* Floating Animation for Container */
@@ -893,3 +911,29 @@ select.minecraft-button {
         font-size: 1em;
     }
 }
+
+/* Top 3 Players Special Styling */
+.leaderboard-rank.rank-gold {
+    color: #FFD700;
+}
+
+.leaderboard-rank.rank-silver {
+    color: #C0C0C0;
+}
+
+.leaderboard-rank.rank-bronze {
+    color: #CD7F32;
+}
+
+.leaderboard-rank {
+    color: #666; /* Standardfarbe für alle anderen Ränge */
+}
+
+/* Floating Animation for Container */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+/* ... rest of existing code ... */
