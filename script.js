@@ -290,14 +290,10 @@ async function fetchLeaderboard() {
     `;
 
     try {
-        // Calculate offset based on current page and page size
-        const offset = (currentPage - 1) * pageSize;
-        
-        // Fetch all data first
         const response = await fetch(`https://api.hglabor.de/stats/FFA/top?sort=${currentSort}`);
         const allData = await response.json();
         
-        // Manually slice the data based on offset and pageSize
+        const offset = (currentPage - 1) * pageSize;
         const pageData = allData.slice(offset, offset + pageSize);
         
         const leaderboardList = document.querySelector('.leaderboard-list');
@@ -305,9 +301,9 @@ async function fetchLeaderboard() {
         
         for (let i = 0; i < pageData.length; i++) {
             const player = pageData[i];
-            const position = offset + i + 1;
+            const position = offset + i + 1; // Position on current page
+            const absolutePosition = offset + i; // Absolute position in dataset
             
-            // Fetch player name
             let playerName;
             try {
                 const nameResponse = await fetch(`https://api.ashcon.app/mojang/v2/user/${player.playerId}`);
@@ -321,6 +317,14 @@ async function fetchLeaderboard() {
             const li = document.createElement('li');
             li.className = 'leaderboard-item';
             
+            // Add rank class based on absolute position and current page
+            let rankClass = '';
+            if (currentPage === 1) {
+                if (absolutePosition === 0) rankClass = 'rank-gold';
+                else if (absolutePosition === 1) rankClass = 'rank-silver';
+                else if (absolutePosition === 2) rankClass = 'rank-bronze';
+            }
+
             li.dataset.playerId = player.playerId;
             li.dataset.playerName = playerName;
 
@@ -332,19 +336,13 @@ async function fetchLeaderboard() {
                 { key: 'currentKillStreak', label: 'Current Streak', value: player.currentKillStreak }
             ];
 
-            statsItems.sort((a, b) => {
-                if (a.key === currentSort) return -1;
-                if (b.key === currentSort) return 1;
-                return 0;
-            });
-
             const statsHTML = statsItems.map(stat => {
                 const className = `leaderboard-stat ${stat.key === currentSort ? 'highlighted' : ''}`;
                 return `<span class="${className}">${stat.value} ${stat.label}</span>`;
             }).join('');
 
             li.innerHTML = `
-                <span class="leaderboard-rank">#${position}</span>
+                <span class="leaderboard-rank ${rankClass}">#${position}</span>
                 <span class="leaderboard-player">${playerName}</span>
                 <span class="leaderboard-stats">
                     ${statsHTML}
@@ -655,7 +653,21 @@ async function showPlayerDetails(playerId, playerName, playerData) {
                 border: 1px solid rgba(255, 255, 255, 0.2);
             }
 
-            
+            .leaderboard-rank.rank-gold {
+                color: #FFD700;
+            }
+
+            .leaderboard-rank.rank-silver {
+                color: #C0C0C0;
+            }
+
+            .leaderboard-rank.rank-bronze {
+                color: #CD7F32;
+            }
+
+            .leaderboard-rank {
+                color: #666; /* Standardfarbe für alle anderen Ränge */
+            }
         `;
         document.head.appendChild(styleElement);
 
@@ -1374,19 +1386,20 @@ function generateAchievementBadges(achievements, playerName) {
     if (!achievements) return '';
 
     let badges = '';
+    const absoluteRank = achievements.rank; // Verwende die absolute Position
 
-    if (achievements.isFirst) {
+    if (absoluteRank === 1) {
         badges += '<span class="achievement-badge achievement-first">🥇 #1</span>';
     }
-    if (achievements.isSecond) {
+    if (absoluteRank === 2) {
         badges += '<span class="achievement-badge achievement-second">🥈 #2</span>';
     }
-    if (achievements.isThird) {
+    if (absoluteRank === 3) {
         badges += '<span class="achievement-badge achievement-third">🥉 #3</span>';
     }
-    if (achievements.isTop10 && !achievements.isFirst && !achievements.isSecond && !achievements.isThird) {
+    if (absoluteRank <= 10 && absoluteRank > 3) {
         badges += '<span class="achievement-badge achievement-top10">Top 10</span>';
     }
 
     return badges;
-} 
+}
